@@ -1,28 +1,25 @@
 import { useState, useEffect, useMemo, JSXElementConstructor, Key, ReactElement } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
-import Sidenav from "examples/Sidenav";
-import Configurator from "examples/Configurator";
 import theme from "assets/theme";
-import themeRTL from "assets/theme/theme-rtl";
 import themeDark from "assets/theme-dark";
-import themeDarkRTL from "assets/theme-dark/theme-rtl";
 import rtlPlugin from "stylis-plugin-rtl";
-import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import routes from "routes";
-import DataTables from "layouts/applications/data-tables";
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
 import Basic from "layouts/authentication/sign-in/basic";
 import AdminHome from "module/AdminHome";
 import Analytics from "layouts/dashboards/analytics";
-import DataTable from "examples/Tables/DataTable";
 import Country from "module/Master/Country/Country";
+import Client from "module/Master/Client/Client";
+import Vendor from "module/Master/Vendor/Vendor";
+import Softwareuser from "module/Master/SoftwareUser/Softwareuser";
+import PortalUser from "module/Master/PortalUser/Portaluser";
+import Presceenernew from "module/Master/PreSceenerNew/PresceenerNew";
+import Emailtemplate from "module/Master/EmailTemplate/Emailtemplate";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -129,6 +126,12 @@ export default function App() {
         <Route path="admin" element={<AdminHome />}>
           <Route path="" element={<Analytics />} />
           <Route path="Country" element={<Country />} />
+          <Route path="Client" element={<Client />} />
+          <Route path="Vendor" element={<Vendor />} />
+          <Route path="SoftwareUser" element={<Softwareuser />} />
+          <Route path="Portaluser" element={<PortalUser />} />
+          <Route path="EmailTemplate" element={<Emailtemplate />} />
+          <Route path="PreScreenerNew" element={<Presceenernew />} />
         </Route>
       </Routes>
     </ThemeProvider>

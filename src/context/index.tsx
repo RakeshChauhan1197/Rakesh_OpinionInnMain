@@ -108,7 +108,7 @@ function reducer(state: StateTypes, action: ActionTypes) {
 function MaterialUIControllerProvider({ children }: { children: ReactNode }): JSX.Element {
   const initialState: StateTypes = {
     miniSidenav: false,
-    transparentSidenav: true,
+    transparentSidenav: false,
     whiteSidenav: false,
     sidenavColor: "info",
     transparentNavbar: true,

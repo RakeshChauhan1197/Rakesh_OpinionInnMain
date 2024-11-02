@@ -146,22 +146,22 @@ const routes = [
       {
         name: "Software User",
         key: "Softwareuser",
-        route: "Software User",
+        route: "SoftwareUser",
       },
       {
         name: "Survey View",
         key: "Surveyview",
-        route: "Survey View",
+        route: "SurveyView",
       },
       {
         name: "Email Template",
         key: "Emailtemplate",
-        route: "Email Template",
+        route: "Emailtemplate",
       },
       {
         name: "Pre Screener New",
-        key: "Prescreenernew",
-        route: "Pre Screener New",
+        key: "PreScreenerNew",
+        route: "PreScreenerNew",
       },
       {
         name: "Polls",
@@ -171,7 +171,7 @@ const routes = [
       {
         name: "Portal User",
         key: "Portaluser",
-        route: "Portal User",
+        route: "Portaluser",
       },
       {
         name: "Promo Codes",
@@ -186,7 +186,7 @@ const routes = [
       {
         name: "Vendor Parent",
         key: "Vendorparent",
-        route: "Vendor Parent",
+        route: "VendorParent",
       },
     ],
   },

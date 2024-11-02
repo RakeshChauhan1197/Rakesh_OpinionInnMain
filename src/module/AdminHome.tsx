@@ -88,7 +88,7 @@ const AdminHome = () => {
           onMouseLeave={handleOnMouseLeave}
         />
 
-        {/* <Configurator /> */}
+        {<Configurator />}
         {configsButton}
 
         <main className="content">

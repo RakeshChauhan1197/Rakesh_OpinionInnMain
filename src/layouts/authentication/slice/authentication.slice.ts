@@ -61,6 +61,7 @@ const auththenticationSlice = createSlice({
         sessionStorage.setItem("country", action.payload.country);
         sessionStorage.setItem("profileImage", action.payload.profileImage);
         sessionStorage.setItem("token", action.payload.token);
+        sessionStorage.setItem("userID", action.payload.userID);
         // Handle undefined value
       })
       .addCase(login.rejected, (state, action: PayloadAction<any>) => {

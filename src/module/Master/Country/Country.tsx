@@ -52,6 +52,7 @@ function Country(): JSX.Element {
     } else {
       await dispatch(addCountry(country));
     }
+    await dispatch(getCountry());
     setOpenSnackbar(true);
     handleCloseModal();
   };
@@ -59,6 +60,9 @@ function Country(): JSX.Element {
   const handleDeleteCountry = async (id: number) => {
     await dispatch(deleteCountry(id));
     setOpenSnackbar(true);
+    setTimeout(() => {
+      dispatch(getCountry());
+    }, 1000);
   };
 
   useEffect(() => {
@@ -107,7 +111,6 @@ function Country(): JSX.Element {
     };
 
     setDataTableData({ table: data });
-    console.log("Data", data);
   }, [countries]);
 
   return (
@@ -140,12 +143,7 @@ function Country(): JSX.Element {
             </MDBox>
 
             <DataTable table={dataTableData.table} canSearch isSorted={false} noEndBorder />
-
-            {/* Pagination alignment */}
-            <MDBox display="flex" justifyContent="flex-end" p={2}>
-              {/* Assuming the pagination component is rendered inside DataTable */}
-              {/* If not, you can manually handle pagination here */}
-            </MDBox>
+            <MDBox display="flex" justifyContent="flex-end" p={2}></MDBox>
           </Card>
         </MDBox>
       </MDBox>
@@ -158,7 +156,12 @@ function Country(): JSX.Element {
         />
       </Modal>
 
-      <Snackbar open={openSnackbar} autoHideDuration={4000} onClose={() => setOpenSnackbar(false)}>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
         <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: "100%" }}>
           {message}
         </Alert>

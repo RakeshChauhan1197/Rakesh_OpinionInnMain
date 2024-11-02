@@ -24,6 +24,7 @@ export interface ILoginSuccessResponce {
   dateofcreation: string;
   profileImage: string;
   token: string;
+  userID: string;
 }
 
 export interface IData {
