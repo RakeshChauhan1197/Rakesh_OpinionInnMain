@@ -18,8 +18,15 @@ import Client from "module/Master/Client/Client";
 import Vendor from "module/Master/Vendor/Vendor";
 import Softwareuser from "module/Master/SoftwareUser/Softwareuser";
 import PortalUser from "module/Master/PortalUser/Portaluser";
-import Presceenernew from "module/Master/PreSceenerNew/PresceenerNew";
 import Emailtemplate from "module/Master/EmailTemplate/Emailtemplate";
+import PresceenerNew from "module/Master/PreSceenerNew/PresceenerNew";
+import Polls from "module/Master/Polls/Polls";
+import Affiliate from "module/Master/Affiliate/Affiliate";
+
+import Vendorparent from "module/Master/VendorParent/Vendorparent";
+import Promocodes from "module/Master/Promocodes/Promocode";
+import Testimonials from "module/Master/Testimonials/Testimonials";
+import Enadpages from "module/Master/Endpages/Endpages";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -130,8 +137,14 @@ export default function App() {
           <Route path="Vendor" element={<Vendor />} />
           <Route path="SoftwareUser" element={<Softwareuser />} />
           <Route path="Portaluser" element={<PortalUser />} />
-          <Route path="EmailTemplate" element={<Emailtemplate />} />
-          <Route path="PreScreenerNew" element={<Presceenernew />} />
+          <Route path="Emailtemplate" element={<Emailtemplate />} />
+          <Route path="PresceenerNew" element={<PresceenerNew />} />
+          <Route path="Polls" element={<Polls />} />
+          <Route path="Affiliate" element={<Affiliate />} />
+          <Route path="Vendorparent" element={<Vendorparent />} />
+          <Route path="Promocodes" element={<Promocodes />} />
+          <Route path="Testimonials" element={<Testimonials />} />
+          <Route path="Endpages" element={<Enadpages />} />
         </Route>
       </Routes>
     </ThemeProvider>

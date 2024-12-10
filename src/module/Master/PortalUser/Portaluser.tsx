@@ -19,9 +19,11 @@ import ValidationCheckIcon from "@mui/icons-material/CheckCircle";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { IPuser } from "./slice/Portaluser.type";
 import Portalusercom from "./Component/Portalusercom";
+import DownloadUser from "./Component/Downloaduser";
 
 function PortalUser(): JSX.Element {
   const [openModal, setOpenModal] = useState(false); // Modal open state
+  const [openModals, setOpenModals] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const pusers = useSelector((state: any) => state.puser.data);
   const message = useSelector((state: any) => state.puser.message);
@@ -79,10 +81,6 @@ function PortalUser(): JSX.Element {
   const handleSendPassLink = (puser: number) => {
     dispatch(passwordLink(puser));
     dispatch(getPuser);
-  };
-
-  const handleDownloadUsers = () => {
-    dispatch(downloadUser());
   };
 
   useEffect(() => {
@@ -157,8 +155,14 @@ function PortalUser(): JSX.Element {
     setOpenModal(true); // Open modal when Block Bulk User is clicked
   };
 
+  const handleDownloadUsers = () => {
+    setOpenModals(true);
+  };
   const handleCloseModal = () => {
     setOpenModal(false); // Close modal
+  };
+  const handleCloseModals = () => {
+    setOpenModals(false); // Close modal
   };
 
   return (
@@ -222,12 +226,9 @@ function PortalUser(): JSX.Element {
       <Modal open={openModal} onClose={handleCloseModal}>
         <Portalusercom onClose={handleCloseModal} />
       </Modal>
-      {/**<Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      /> */}
+      <Modal open={openModals} onClose={handleCloseModals}>
+        <DownloadUser onClose={handleCloseModals} />
+      </Modal>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}

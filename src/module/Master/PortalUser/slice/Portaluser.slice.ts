@@ -65,11 +65,15 @@ export const skipIPValidation = createAsyncThunk(
   }
 );
 
-export const downloadUser = createAsyncThunk("Puser/downloadPuser", async () => {
-  const response = await axiosInstance.get("/api/PortalUser/downloadUser");
-  console.log("Response from downloadUser API: ", response.data);
-  return response.data as IPuser[];
-});
+export const downloadUser = createAsyncThunk(
+  "Puser/downloadPuser",
+  async ({ startDate, endDate }: { startDate: string; endDate: string }) => {
+    const response = await axiosInstance.get(
+      `/api/PortalUser/downloadUser?startDate=${startDate}&endDate=${endDate}`
+    );
+    return response.data as IPuser[];
+  }
+);
 
 // Resend Password Link
 export const passwordLink = createAsyncThunk("user/resendPasswordLink", async (user: number) => {

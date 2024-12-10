@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Checkbox, FormControlLabel, Button, useMediaQuery, Grid, MenuItem } from "@mui/material";
 import Card from "@mui/material/Card";
 import { Formik, Form } from "formik";
@@ -20,6 +20,8 @@ interface SoftusercomProps {
 const Softusercom: React.FC<SoftusercomProps> = ({ softwareuser, onClose, onSave }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+
+  const parameterSectionRef = useRef<HTMLDivElement>(null);
 
   const [userRole, setuserRole] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
@@ -54,13 +56,11 @@ const Softusercom: React.FC<SoftusercomProps> = ({ softwareuser, onClose, onSave
         <MDBox mt={1.625}>
           <Formik
             initialValues={{
-              firstName: softwareuser?.firstName || "",
-              lastName: softwareuser?.lastName || "",
-              email: softwareuser?.email || "",
-              password: softwareuser?.password || "",
-              userRole: softwareuser?.userRole || "",
-              gender: softwareuser?.gender || "",
-              country: softwareuser?.country || "",
+              firstName: softwareuser ? softwareuser.firstName : "",
+              lastName: softwareuser ? softwareuser.lastName : "",
+              email: softwareuser ? softwareuser.emailID : "",
+              password: softwareuser ? softwareuser.pwd : "",
+              userRole: softwareuser ? softwareuser.userrole : "",
             }}
             validate={(values) => {
               const errors: any = {};
@@ -75,19 +75,17 @@ const Softusercom: React.FC<SoftusercomProps> = ({ softwareuser, onClose, onSave
                 uid: softwareuser ? softwareuser.uid : 0,
                 firstName: values.firstName,
                 lastName: values.lastName,
-                email: values.email,
-                password: values.password,
-                userRole: values.userRole,
-                gender: values.gender,
-                isAuth: softwareuser ? softwareuser.isAuth : false,
-                country: values.country,
+                emailID: values.email,
+                pwd: values.password,
+                userrole: values.userRole,
+                isauth: 1,
               };
               await onSave(newSoftwareuser);
               setSubmitting(false);
               onClose();
             }}
           >
-            {({ values, handleChange, isSubmitting, errors, touched }) => (
+            {({ values, handleChange, isSubmitting }) => (
               <Form>
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={12}>

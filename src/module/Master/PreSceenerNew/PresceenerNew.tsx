@@ -2,6 +2,7 @@ import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import Snackbar from "@mui/material/Snackbar";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -9,23 +10,49 @@ import DataTable from "examples/Tables/DataTable";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch } from "app/store";
+import { Alert } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline"; // Replace with appropriate icon
-import ContentCopyIcon from "@mui/icons-material/ContentCopy"; // Replace with appropriate icon
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Modal from "@mui/material/Modal";
-import Presceenernewcom from "./Component/Presceenernewcom";
-import { getPresceener } from "./slice/Presceener.slice";
-import { selectorGetPresceeners } from "./slice/Presceener.selector";
+import PresceenerNewCom from "./Component/Presceenernewcom";
+import { Add as AddIcon } from "@mui/icons-material";
+import {
+  getPresceener,
+  addPresceener,
+  updatePresceener,
+  deletePresceener,
+  getPresceenerByID,
+} from "./slice/Presceener.slice";
+import {
+  selectorGetPresceeners,
+  selectorError,
+  selectorLoading,
+  selectorMessage,
+} from "./slice/Presceener.selector";
+import { IPresceener } from "./slice/Presceener.type";
+import Question from "./Component/Question";
 
-function Presceenernew(): JSX.Element {
+function PresceenerNew(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>();
   const presceeners = useSelector(selectorGetPresceeners);
+  const [selectedPresceener, setSelectedPresceener] = useState<IPresceener | null>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const [openHelpModal, setOpenHelpModal] = useState(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+
+  const handleOpenHelpModal = () => setOpenHelpModal(true); // Open help modal
+  const handleCloseHelpModal = () => setOpenHelpModal(false); // Close help modal
+
+  const message = useSelector(selectorMessage);
+  const loading = useSelector(selectorLoading);
+  const error = useSelector(selectorError);
 
   useEffect(() => {
     dispatch(getPresceener());
@@ -52,20 +79,28 @@ function Presceenernew(): JSX.Element {
       PSCountry: row.psCountry,
       action: (
         <>
-          <IconButton>
+          <IconButton
+            onClick={() => handleEditPresceener(row.psid)}
+            sx={{ padding: 0, color: "#008CBA" }}
+            title="Edit"
+          >
             <EditIcon />
           </IconButton>
-          <IconButton>
+          <IconButton
+            onClick={() => handleDeletePresceener(row.psid)} // Attach delete handler
+            sx={{ padding: 0, ml: 1, color: "#f10a0aad" }}
+            title="Delete"
+          >
             <DeleteIcon />
           </IconButton>
-          <IconButton>
-            <HelpOutlineIcon /> {/* Corrected icon */}
+          <IconButton onClick={handleOpenHelpModal} sx={{ padding: 0 }} title="Question">
+            <HelpOutlineIcon />
           </IconButton>
-          <IconButton>
-            <ContentCopyIcon /> {/* Corrected icon */}
+          <IconButton title="Copy" sx={{ padding: 0 }}>
+            <ContentCopyIcon />
           </IconButton>
-          <IconButton>
-            <CheckCircleIcon /> {/* Corrected icon */}
+          <IconButton title="Download" sx={{ padding: 0 }}>
+            <CheckCircleIcon />
           </IconButton>
         </>
       ),
@@ -86,6 +121,50 @@ function Presceenernew(): JSX.Element {
     setDataTableData({ table: data });
   }, [presceeners]);
 
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
+  };
+
+  useEffect(() => {
+    if (message) {
+      setSnackbarMessage(message);
+      setOpenSnackbar(true);
+    }
+  }, [message]);
+
+  useEffect(() => {
+    if (error) {
+      setSnackbarMessage(error);
+      setOpenSnackbar(true);
+    }
+  }, [error]);
+
+  const handleEditPresceener = async (psid: number) => {
+    try {
+      const presceener = await dispatch(getPresceenerByID(psid));
+      setSelectedPresceener(presceener.payload);
+      handleOpenModal();
+    } catch (error) {
+      console.error("Error fetching presceener by ID:", error);
+    }
+  };
+
+  const handleDeletePresceener = async (id: number) => {
+    await dispatch(deletePresceener(id));
+    setOpenSnackbar(true);
+    await dispatch(getPresceener());
+  };
+
+  const handleSavePresceener = async (presceener: IPresceener) => {
+    if (selectedPresceener) {
+      await dispatch(updatePresceener(presceener)).unwrap();
+    } else {
+      await dispatch(addPresceener(presceener)).unwrap();
+    }
+    await dispatch(getPresceener());
+    setOpenSnackbar(true);
+    handleCloseModal();
+  };
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -95,11 +174,14 @@ function Presceenernew(): JSX.Element {
             <MDBox p={3} lineHeight={0}>
               <MDBox display="flex" justifyContent="space-between" alignItems="center">
                 <MDTypography variant="h5" fontWeight="medium">
-                  Presceener Master
+                  Prescreener Master
                 </MDTypography>
                 <Button
                   variant="contained"
-                  onClick={handleOpenModal}
+                  onClick={() => {
+                    setSelectedPresceener(null);
+                    handleOpenModal();
+                  }}
                   sx={{
                     ml: 2,
                     backgroundColor: "#008CBA",
@@ -110,7 +192,13 @@ function Presceenernew(): JSX.Element {
                     },
                   }}
                 >
-                  Add New Presceener
+                  <AddIcon
+                    sx={{
+                      fontSize: "3rem", // Double the default size
+                      marginRight: "4px", // Adds space between icon and text
+                    }}
+                  />
+                  Add Prescreener
                 </Button>
               </MDBox>
               <DataTable table={dataTableData.table} canSearch isSorted={false} noEndBorder />
@@ -140,13 +228,51 @@ function Presceenernew(): JSX.Element {
               boxShadow: 24,
             }}
           >
-            <Presceenernewcom onClose={handleCloseModal} />
+            <PresceenerNewCom
+              onSave={handleSavePresceener}
+              onClose={handleCloseModal}
+              presceener={selectedPresceener}
+            />
           </MDBox>
         </MDBox>
       </Modal>
+      <Modal open={openHelpModal} onClose={handleCloseHelpModal}>
+        <MDBox
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="100vh"
+          width="100vw"
+          sx={{ paddingLeft: 10 }}
+        >
+          <MDBox
+            sx={{
+              width: "120%",
+              maxHeight: "100vh",
+              overflowY: "auto",
+              backgroundColor: "white",
+              padding: 4,
+              borderRadius: 2,
+              boxShadow: 24,
+            }}
+          >
+            <Question onClose={handleCloseHelpModal} />
+          </MDBox>
+        </MDBox>
+      </Modal>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
       <Footer />
     </DashboardLayout>
   );
 }
 
-export default Presceenernew;
+export default PresceenerNew;

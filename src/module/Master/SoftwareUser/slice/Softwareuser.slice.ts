@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "app/axiosInstanse"; // Fixed typo
 import { ISoftwareuser } from "./Softwareuser.type";
-import Softwareuser from "../Softwareuser";
 
 interface SoftwareuserState {
   data: ISoftwareuser[];
@@ -26,7 +25,10 @@ export const getSoftwareuser = createAsyncThunk("Softwareuser/getSoftwareuser", 
 export const addSoftwareuser = createAsyncThunk(
   "softwareuser/addSoftwareuser",
   async (softwareuser: ISoftwareuser) => {
+    alert("softwareuser " + JSON.stringify(softwareuser));
     const response = await axiosInstance.post("api/AdminUser", softwareuser);
+    alert("response " + JSON.stringify(response));
+
     return response.data.message;
   }
 );
@@ -45,8 +47,11 @@ export const fetchSoftwareuser = createAsyncThunk("userrole/fetchuserrole", asyn
 });
 
 export const lockunlockPuser = createAsyncThunk("user/lockUnlockPuser", async (user: number) => {
+  alert("user" + JSON.stringify(user));
   const role = sessionStorage.getItem("roles");
+  alert("role" + JSON.stringify(role));
   const response = await axiosInstance.put(`api/AdminUser/LockUnlock?UID=${user}&role=${role}`);
+  alert("response" + JSON.stringify(response));
   return { message: response.data.message };
 });
 
@@ -93,17 +98,17 @@ export const softwareuserSlice = createSlice({
     });
     builder.addCase(fetchSoftwareuser.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || "Failed to fetch vendors";
+      state.error = action.error.message;
     });
     builder.addCase(getSoftwareuser.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message || "Failed to load software users";
+      state.error = action.error.message;
     });
     builder.addCase(addSoftwareuser.rejected, (state, action) => {
-      state.error = action.error.message || "Failed to add user";
+      state.error = action.error.message;
     });
     builder.addCase(lockunlockPuser.rejected, (state, action) => {
-      state.error = action.error.message || "Failed to lock/unlock user";
+      state.error = action.error.message;
     });
   },
 });

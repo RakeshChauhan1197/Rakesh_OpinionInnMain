@@ -17,3 +17,7 @@ export interface IPuser {
   signUP_IP: string;
   skip_IP_Validation: number;
 }
+export interface IDownload {
+  fromDate: string;
+  toDate: string;
+}

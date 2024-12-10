@@ -1,9 +1,10 @@
 export interface ITemplate {
   tid: number;
-  template_name: string;
+  template_name: String;
   subject: string;
   msgBody: string;
 }
-export interface Ivariable {
+
+export interface IVariables {
   variables: string;
 }

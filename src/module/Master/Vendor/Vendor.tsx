@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch } from "app/store";
 import Vendorcom from "module/Master/Vendor/Component/Vendorcom";
 import { IVendor } from "./slice/Vendor.type";
+import { Add as AddIcon } from "@mui/icons-material";
 import {
   fetchVendors,
   deleteVendor,
@@ -149,6 +150,12 @@ function Vendor(): JSX.Element {
                     },
                   }}
                 >
+                  <AddIcon
+                    sx={{
+                      fontSize: "3rem", // Double the default size
+                      marginRight: "4px", // Adds space between icon and text
+                    }}
+                  />
                   Add Vendor
                 </Button>
               </MDBox>

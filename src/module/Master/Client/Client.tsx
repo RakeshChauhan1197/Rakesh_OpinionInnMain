@@ -15,6 +15,7 @@ import Clientcom from "./Component/Clientcom";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Add as AddIcon } from "@mui/icons-material";
 
 const Client = (): JSX.Element => {
   const [openModal, setOpenModal] = useState(false);
@@ -84,12 +85,6 @@ const Client = (): JSX.Element => {
             <EditIcon />
           </IconButton>
           <IconButton
-            onClick={() => alert(`View client ${row.clientName}`)}
-            sx={{ padding: 0, ml: 1, color: "#999393" }}
-          >
-            <VisibilityIcon />
-          </IconButton>
-          <IconButton
             onClick={() => handleDeleteClient(row.cid)}
             sx={{ padding: 0, ml: 1, color: "#f10a0aad" }}
           >
@@ -138,6 +133,12 @@ const Client = (): JSX.Element => {
                     },
                   }}
                 >
+                  <AddIcon
+                    sx={{
+                      fontSize: "3rem", // Double the default size
+                      marginRight: "4px", // Adds space between icon and text
+                    }}
+                  />
                   Add Client
                 </Button>
               </MDBox>

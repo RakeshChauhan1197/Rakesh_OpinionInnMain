@@ -8,6 +8,7 @@ import MDButton from "components/MDButton";
 import { useDispatch } from "react-redux";
 import { blockUsersCSVEmails, uploadCSV } from "../slice/Portaluser.slice"; // Adjust imports as needed
 import { AppDispatch } from "app/store"; // Import the AppDispatch type
+import FormField from "layouts/pages/account/components/FormField";
 
 function Portalusercom({ onClose }: { onClose: () => void }) {
   const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -60,14 +61,14 @@ function Portalusercom({ onClose }: { onClose: () => void }) {
               <Form>
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={12}>
-                    <TextField
+                    <FormField
                       select
                       label="Blocking Method"
                       name="blockingMethod"
                       value={values.blockingMethod}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                         handleChange(e);
-                        setBlockingMethod(e.target.value);
+                        setBlockingMethod(e.target.value as string);
                       }}
                       fullWidth
                       error={touched.blockingMethod && Boolean(errors.blockingMethod)}
@@ -80,13 +81,13 @@ function Portalusercom({ onClose }: { onClose: () => void }) {
                     >
                       <MenuItem value="Comma Separated Email">Comma Separated Email</MenuItem>
                       <MenuItem value="From CSV File">From CSV File</MenuItem>
-                    </TextField>
+                    </FormField>
                   </Grid>
 
                   {/* Conditional rendering based on dropdown selection */}
                   {blockingMethod === "Comma Separated Email" && (
                     <Grid item xs={12}>
-                      <TextField
+                      <FormField
                         label="Email List"
                         name="emailList"
                         multiline

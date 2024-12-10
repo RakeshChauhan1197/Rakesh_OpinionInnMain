@@ -117,8 +117,8 @@ const routes = [
       },
       {
         name: "End Pages",
-        key: "End Pages",
-        route: "End Pages",
+        key: "Endpages",
+        route: "Endpages",
       },
     ],
   },

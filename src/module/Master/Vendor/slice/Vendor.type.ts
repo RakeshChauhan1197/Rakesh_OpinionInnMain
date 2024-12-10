@@ -24,11 +24,11 @@ export interface IVendor {
   Vendor_ID: number;
 }
 
-export interface parentList{
-  tid :number;
-  vendor_Name:string;
+export interface parentList {
+  tid: number;
+  vendor_Name: string;
 }
 
-export interface parameterList{  
-  vendorName:string;
+export interface parameterList {
+  vendorName: string;
 }

@@ -11,7 +11,6 @@ export const login = createAsyncThunk<ILoginSuccessResponce, ILoginRequest>(
         userID: email,
         password: password,
       });
-      console.log("response", response);
       return response.data as ILoginSuccessResponce;
     } catch (error) {
       const err = error as ILoginSuccessResponce;
@@ -62,7 +61,6 @@ const auththenticationSlice = createSlice({
         sessionStorage.setItem("profileImage", action.payload.profileImage);
         sessionStorage.setItem("token", action.payload.token);
         sessionStorage.setItem("userID", action.payload.userID);
-        // Handle undefined value
       })
       .addCase(login.rejected, (state, action: PayloadAction<any>) => {
         state.status = "failed";

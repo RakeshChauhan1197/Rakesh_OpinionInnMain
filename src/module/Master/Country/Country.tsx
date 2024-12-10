@@ -6,7 +6,6 @@ import { selectorLoading, selectorGetCountry } from "./slice/Country.selector";
 import { ICountry } from "./slice/Country.type";
 import { Button, Card, IconButton, Modal, Snackbar, Alert } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -14,6 +13,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 import CountryForm from "./CountryForm";
+import { Add as AddIcon } from "@mui/icons-material";
 
 function Country(): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -81,14 +81,6 @@ function Country(): JSX.Element {
           <IconButton onClick={() => handleOpenModal(row)} sx={{ padding: 0, color: "#008CBA" }}>
             <EditIcon />
           </IconButton>
-
-          <IconButton
-            onClick={() => alert(`View country ${row.countryName}`)}
-            sx={{ padding: 0, ml: 1, color: "#999393" }}
-          >
-            <VisibilityIcon />
-          </IconButton>
-
           <IconButton
             onClick={() => handleDeleteCountry(row.tID)}
             sx={{ padding: 0, ml: 1, color: "#f10a0aad" }}
@@ -137,6 +129,12 @@ function Country(): JSX.Element {
                     },
                   }}
                 >
+                  <AddIcon
+                    sx={{
+                      fontSize: "3rem", // Double the default size
+                      marginRight: "4px", // Adds space between icon and text
+                    }}
+                  />
                   Add Country
                 </Button>
               </MDBox>

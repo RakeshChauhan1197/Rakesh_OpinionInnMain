@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox, FormControlLabel, Button, useMediaQuery, Grid, MenuItem } from "@mui/material";
 import Card from "@mui/material/Card";
 import { Formik, Form } from "formik";
@@ -6,27 +6,33 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import FormField from "module/Master/Country/Component/Formfield/Formfield";
+import { ICountry } from "../slice/Promocodes.type";
+import { Ipromocodes } from "../slice/Promocodes.type";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "app/store";
+import { getCountry } from "../slice/Promocodes.slice";
+import { string } from "yup";
 
-// Define initial state for client fields
-const initialErrors = {
-  firstName: false,
-  lastName: false,
-  city: false,
-  town: false,
-  state: false,
-  zip: false,
-  promocode: false,
-  clientName: false,
-  officeAddress: false,
-  country: false,
-  officePhone: false,
-  personalPhone: false,
-  payeeName: false,
-  payPalEmailId: false,
-};
+interface PromocodescomProps {
+  promocodes: Ipromocodes | null;
+  onClose: () => void;
+  onSave: (promocodes: Ipromocodes) => Promise<void>;
+}
 
-function Promocodescom({ onClose }: { onClose: () => void }) {
+const Promocodescom: React.FC<PromocodescomProps> = ({ promocodes, onClose, onSave }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const [countries, setCountries] = useState<ICountry[]>([]); // Updated to use ICountry[]
+
+  useEffect(() => {
+    // Dispatch getCountry action to fetch country data
+    dispatch(getCountry()).then((action: any) => {
+      if (getCountry.fulfilled.match(action)) {
+        setCountries(action.payload); // Set fetched countries to local state
+      }
+    });
+  }, [dispatch]);
+
   return (
     <MDBox
       display="flex"
@@ -46,29 +52,48 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
         <MDBox mt={1.625}>
           <Formik
             initialValues={{
-              firstName: "",
-              lastName: "",
-              city: "",
-              town: "",
-              state: "",
-              zip: "",
-              promocode: "",
-              clientName: "",
-              officeAddress: "",
-              country: "",
-              officePhone: "",
-              personalPhone: "",
-              payeeName: "",
-              payPalEmailId: "",
+              firstName: promocodes?.firstName || " ",
+              lastName: promocodes?.lastName || " ",
+              city: promocodes?.city || "",
+              town: promocodes?.town || "",
+              state: promocodes?.state || "",
+              zip: promocodes?.zipCode.toString() || "", // Convert to string
+              promocode: promocodes?.promoName || "",
+              clientName: promocodes?.clientName || "",
+              officeAddress: promocodes?.officeAdd || "",
+              country: promocodes?.country || "",
+              officePhone: promocodes?.officePhone.toString() || "", // Convert to string
+              personalPhone: promocodes?.personalPhone.toString() || "", // Convert to string
+              payeeName: promocodes?.payeeName || "",
+              payPalEmailId: promocodes?.payPalEmailId || "",
             }}
             validate={(values) => {
               const errors: any = {};
-              if (!values.clientName) errors.clientName = "Client name is Required";
+              if (!values.clientName) errors.clientName = "Client name is required";
               return errors;
             }}
-            onSubmit={(values, { setSubmitting }) => {
-              console.log("Form Submitted: ", values);
+            onSubmit={async (values, { setSubmitting }) => {
+              const newPromocodes: Ipromocodes = {
+                pid: promocodes ? promocodes.pid : 0,
+                firstName: values.firstName,
+                lastName: values.lastName,
+                city: values.city,
+                country: values.country,
+                town: values.town,
+                promoName: values.promocode,
+                state: values.state,
+                zipCode: Number(values.zip), // Parse as number
+                clientName: values.clientName,
+                officeAdd: values.officeAddress,
+                officePhone: Number(values.officePhone), // Parse as number
+                personalPhone: Number(values.personalPhone), // Parse as number
+                payeeName: values.payeeName,
+                payPalEmailId: values.payPalEmailId,
+                isAuth: promocodes ? promocodes.isAuth : 1,
+              };
+              await onSave(newPromocodes);
               setSubmitting(false);
+              onClose();
             }}
           >
             {({ values, handleChange, isSubmitting }) => (
@@ -83,7 +108,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -93,7 +117,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -103,7 +126,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -113,7 +135,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -123,7 +144,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -133,7 +153,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -143,7 +162,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -153,7 +171,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -163,8 +180,7 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12}>
                     <FormField
                       select
                       label="Country"
@@ -172,22 +188,21 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       value={values.country}
                       onChange={handleChange}
                     >
-                      <MenuItem value="Option1">Option 1</MenuItem>
-                      <MenuItem value="Option2">Option 2</MenuItem>
-                      <MenuItem value="Option3">Option 3</MenuItem>
+                      {countries.map((country) => (
+                        <MenuItem key={country.tID} value={country.countryCode}>
+                          {country.countryName}
+                        </MenuItem>
+                      ))}
                     </FormField>
                   </Grid>
-
                   <Grid item xs={12}>
                     <hr />
                   </Grid>
-
                   <Grid item xs={12} sm={12}>
                     <MDBox lineHeight={0}>
                       <MDTypography variant="h5">Contact Details </MDTypography>
                     </MDBox>
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -197,7 +212,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -207,17 +221,14 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12}>
                     <hr />
                   </Grid>
-
                   <Grid item xs={12} sm={12}>
                     <MDBox lineHeight={0}>
                       <MDTypography variant="h5">Account Information </MDTypography>
                     </MDBox>
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -227,7 +238,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12} sm={6}>
                     <FormField
                       type="text"
@@ -237,19 +247,17 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
                       onChange={handleChange}
                     />
                   </Grid>
-
                   <Grid item xs={12}>
                     <MDBox display="flex" justifyContent="center" sx={{ marginTop: 2 }}>
                       <MDButton variant="gradient" color="light" onClick={onClose}>
                         Cancel
                       </MDButton>
-
                       <MDButton
                         disabled={isSubmitting}
                         type="submit"
                         variant="gradient"
                         color="dark"
-                        sx={{ marginLeft: 2 }} // Add margin for spacing
+                        sx={{ marginLeft: 2 }}
                       >
                         Submit
                       </MDButton>
@@ -263,6 +271,6 @@ function Promocodescom({ onClose }: { onClose: () => void }) {
       </Card>
     </MDBox>
   );
-}
+};
 
 export default Promocodescom;

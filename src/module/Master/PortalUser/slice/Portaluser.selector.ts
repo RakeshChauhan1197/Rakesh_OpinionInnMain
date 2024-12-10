@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "app/store";
 import { IPuser } from "./Portaluser.type";
 
-export const user = (state: RootState) => state.portaluser;
+export const user = (state: RootState) => state.puser;
 
 export const selectorLoading = createSelector(user, (state) => {
   return state.loading;

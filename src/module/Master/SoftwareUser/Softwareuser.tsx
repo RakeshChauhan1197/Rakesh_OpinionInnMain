@@ -4,6 +4,7 @@ import MDBox from "components/MDBox";
 import Snackbar from "@mui/material/Snackbar";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { Alert } from "@mui/material";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import Softusercom from "module/Master/SoftwareUser/Component/Softusercom";
 import { ISoftwareuser } from "./slice/Softwareuser.type";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { lockunlockPuser } from "./slice/Softwareuser.slice";
+import { Add as AddIcon } from "@mui/icons-material";
 import {
   selectError,
   selectLoading,
@@ -38,16 +40,6 @@ function Softwareuser(): JSX.Element {
     dispatch(getSoftwareuser());
   }, [dispatch]);
 
-  const columns = [
-    { Header: "Serial No", accessor: "serialNumber", width: "20%" },
-    { Header: "First Name", accessor: "firstName", width: "25%" },
-    { Header: "Last Name", accessor: "lastName", width: "25%" },
-    { Header: "Email ID", accessor: "email", width: "25%" },
-    { Header: "Role", accessor: "userRole", width: "15%" },
-    { Header: "Status", accessor: "status", width: "15%" },
-    { Header: "Action", accessor: "action", width: "15%" },
-  ];
-
   const [dataTableData, setDataTableData] = useState<{
     table: {
       columns: { Header: string; accessor: string; width: string }[];
@@ -55,7 +47,7 @@ function Softwareuser(): JSX.Element {
     };
   }>({
     table: {
-      columns: columns,
+      columns: [],
       rows: [],
     },
   });
@@ -93,51 +85,57 @@ function Softwareuser(): JSX.Element {
   };
 
   const handleSaveSoftwareuser = async (softwareuser: ISoftwareuser) => {
-    try {
-      if (selectedSoftwareuser) {
-        await dispatch(updateSoftwareuser(softwareuser));
-      } else {
-        await dispatch(addSoftwareuser(softwareuser));
-      }
-      await dispatch(getSoftwareuser());
-      setOpenSnackbar(true);
-      handleCloseModal();
-    } catch (error) {
-      console.error("Failed to save software user:", error);
+    if (selectedSoftwareuser) {
+      await dispatch(updateSoftwareuser(softwareuser));
+    } else {
+      await dispatch(addSoftwareuser(softwareuser));
     }
+    await dispatch(getSoftwareuser());
+
+    setOpenSnackbar(true);
+    handleCloseModal();
   };
 
   useEffect(() => {
-    const rowsWithActions = softwareUsers.map((row: ISoftwareuser, index: number) => ({
-      serialNumber: index + 1,
-      firstName: row.firstName,
-      lastName: row.lastName,
-      email: row.email,
-      status: " ",
-      userRole: row.userRole,
-      action: (
-        <>
-          <IconButton onClick={() => handleLockUnlock(row.uid)} title="Lock Unlock">
-            <LockOpenIcon />
-          </IconButton>
-          <IconButton
-            onClick={() => handleOpenModal(row)}
-            sx={{ padding: 0, color: "#008CBA" }}
-            title="Edit"
-          >
-            <EditIcon />
-          </IconButton>
-        </>
-      ),
-    }));
+    const rowsWithActions = softwareUsers.map((row, index) => {
+      const isAuth = row.isauth === 1 ? "Active" : "Blocked";
+      return {
+        serialNumber: index + 1,
+        firstName: row.firstName,
+        lastName: row.lastName,
+        email: row.emailID,
+        isAuth: isAuth,
+        userRole: row.userrole,
+        action: (
+          <>
+            <IconButton onClick={() => handleLockUnlock(row.uid)} title="Lock Unlock">
+              <LockOpenIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => handleOpenModal(row)}
+              sx={{ padding: 0, color: "#008CBA" }}
+              title="Edit"
+            >
+              <EditIcon />
+            </IconButton>
+          </>
+        ),
+      };
+    });
+    const data = {
+      columns: [
+        { Header: "Serial No", accessor: "serialNumber", width: "20%" },
+        { Header: "First Name", accessor: "firstName", width: "25%" },
+        { Header: "Last Name", accessor: "lastName", width: "25%" },
+        { Header: "Email ID", accessor: "email", width: "25%" },
+        { Header: "Role", accessor: "userRole", width: "15%" },
+        { Header: "Status", accessor: "isAuth", width: "15%" },
+        { Header: "Action", accessor: "action", width: "15%" },
+      ],
+      rows: rowsWithActions,
+    };
 
-    setDataTableData((prevState) => ({
-      ...prevState,
-      table: {
-        ...prevState.table,
-        rows: rowsWithActions,
-      },
-    }));
+    setDataTableData({ table: data });
   }, [softwareUsers]);
 
   return (
@@ -161,6 +159,12 @@ function Softwareuser(): JSX.Element {
                     },
                   }}
                 >
+                  <AddIcon
+                    sx={{
+                      fontSize: "3rem", // Double the default size
+                      marginRight: "4px", // Adds space between icon and text
+                    }}
+                  />
                   Add Software User
                 </Button>
               </MDBox>
@@ -199,10 +203,14 @@ function Softwareuser(): JSX.Element {
       </Modal>
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
+        autoHideDuration={4000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success" sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
       <Footer />
     </DashboardLayout>
   );

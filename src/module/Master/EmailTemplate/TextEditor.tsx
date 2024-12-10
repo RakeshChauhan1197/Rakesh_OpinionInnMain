@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import "quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 
-const TextEditor: React.FC = () => {
-  const [content, setContent] = useState<string>("");
+interface TextEditorProps {
+  msgBody: string;
+  onmsgBodyChange: (newmsgBody: string) => void;
+}
 
-  // Define modules for ReactQuill
+const TextEditor: React.FC<TextEditorProps> = ({ msgBody, onmsgBodyChange }) => {
   const modules = {
     toolbar: [
       [{ size: ["small", false, "large", "huge"] }],
@@ -30,41 +32,12 @@ const TextEditor: React.FC = () => {
             "#0066cc",
             "#9933ff",
             "#ffffff",
-            "#facccc",
-            "#ffebcc",
-            "#ffffcc",
-            "#cce8cc",
-            "#cce0f5",
-            "#ebd6ff",
-            "#bbbbbb",
-            "#f06666",
-            "#ffc266",
-            "#ffff66",
-            "#66b966",
-            "#66a3e0",
-            "#c285ff",
-            "#888888",
-            "#a10000",
-            "#b26b00",
-            "#b2b200",
-            "#006100",
-            "#0047b2",
-            "#6b24b2",
-            "#444444",
-            "#5c0000",
-            "#663d00",
-            "#666600",
-            "#003700",
-            "#002966",
-            "#3d1466",
-            "custom-color",
           ],
         },
       ],
     ],
   };
 
-  // Define formats for ReactQuill
   const formats = [
     "header",
     "height",
@@ -83,25 +56,17 @@ const TextEditor: React.FC = () => {
     "size",
   ];
 
-  // Handle content change in the text editor
-  const handleProcedureContentChange = (content: string) => {
-    setContent(content);
-    console.log("content---->", content);
-  };
-
   return (
-    <div>
-      <div style={{ display: "grid", justifyContent: "center" }}>
-        <ReactQuill
-          theme="snow"
-          modules={modules}
-          formats={formats}
-          placeholder="Write your Email..."
-          value={content}
-          onChange={handleProcedureContentChange}
-          style={{ height: "253px", width: "46.9rem" }}
-        />
-      </div>
+    <div style={{ display: "grid", justifyContent: "center" }}>
+      <ReactQuill
+        theme="snow"
+        modules={modules}
+        formats={formats}
+        placeholder="Write your Email..."
+        value={msgBody}
+        onChange={onmsgBodyChange}
+        style={{ height: "253px", width: "41rem" }}
+      />
     </div>
   );
 };

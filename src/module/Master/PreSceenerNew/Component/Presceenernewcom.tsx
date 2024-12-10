@@ -1,22 +1,43 @@
-import React, { useEffect, useRef } from "react";
-import { Checkbox, FormControlLabel, Button, useMediaQuery, Grid, MenuItem } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Checkbox,
+  FormControlLabel,
+  Button,
+  useMediaQuery,
+  Grid,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
 import Card from "@mui/material/Card";
 import { Formik, Form } from "formik";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import FormField from "module/Master/Country/Component/Formfield/Formfield";
+import { IPresceener, ICountry } from "../slice/Presceener.type";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "app/store";
+import { getCountry } from "../slice/Presceener.slice";
+import { Close as CloseIcon } from "@mui/icons-material";
 
-// Define initial state for client fields
-const initialErrors = {
-  presceenerName: false,
-  description: false,
-  country: false,
-  note: false,
-};
+interface PresceenerComProps {
+  presceener: IPresceener | null;
+  onClose: () => void;
+  onSave: (presceener: IPresceener) => Promise<void>;
+}
 
-function Presceenernewcom({ onClose }: { onClose: () => void }) {
+const PresceenerNewCom: React.FC<PresceenerComProps> = ({ presceener, onClose, onSave }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const [countries, setCountries] = useState<ICountry[]>([]);
+
+  useEffect(() => {
+    dispatch(getCountry()).then((action: any) => {
+      if (getCountry.fulfilled.match(action)) {
+        setCountries(action.payload);
+      }
+    });
+  }, [dispatch]);
 
   return (
     <MDBox
@@ -26,47 +47,75 @@ function Presceenernewcom({ onClose }: { onClose: () => void }) {
       minHeight="100vh"
       style={{ overflowY: "auto" }}
     >
-      <Card sx={{ maxWidth: 1000, padding: 6, width: isSmallScreen ? "100%" : "70rem" }}>
+      <Card
+        sx={{
+          maxWidth: 1000,
+          padding: 6,
+          width: isSmallScreen ? "100%" : "30rem",
+          position: "relative",
+        }}
+      >
+        <IconButton
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            color: "#000",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <MDBox lineHeight={0}>
           <MDTypography variant="h5">Presceener Management</MDTypography>
           <MDTypography variant="button" color="text">
-            Presceener information
+            Presceener Information
           </MDTypography>
         </MDBox>
 
         <MDBox mt={1.625}>
           <Formik
             initialValues={{
-              presceenerName: "",
-              description: "",
-              country: "",
-              note: "",
+              presceenerName: presceener?.psName || "",
+              description: presceener?.psDesc || "",
+              country: presceener?.psCountry || "",
+              note: presceener?.note || "",
+              date: presceener?.psDate || "",
             }}
             validate={(values) => {
-              const errors: any = {};
-              if (!values.presceenerName) errors.presceenerName = "Presceener Name is Required";
-              if (!values.description) errors.description = "Description is Required";
+              const errors: { [key: string]: string } = {};
+              if (!values.presceenerName) errors.presceenerName = "Presceener Name is required";
+              if (!values.description) errors.description = "Description is required";
               return errors;
             }}
-            onSubmit={(values, { setSubmitting }) => {
-              console.log("Form Submitted: ", values);
+            onSubmit={async (values, { setSubmitting }) => {
+              const newPresceener: IPresceener = {
+                psid: presceener ? presceener.psid : 0,
+                psName: values.presceenerName,
+                psDesc: values.description,
+                note: values.note,
+                psCountry: values.country,
+                psDate: values.date,
+              };
+              await onSave(newPresceener);
               setSubmitting(false);
+              onClose();
             }}
           >
             {({ values, handleChange, isSubmitting }) => (
               <Form>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={12}>
+                  <Grid item xs={12}>
                     <FormField
                       type="text"
-                      label="Presceener Name "
+                      label="Presceener Name"
                       name="presceenerName"
                       value={values.presceenerName}
                       onChange={handleChange}
                       required
                     />
                   </Grid>
-                  <Grid item xs={12} sm={12}>
+                  <Grid item xs={12}>
                     <FormField
                       type="text"
                       label="Description"
@@ -76,7 +125,7 @@ function Presceenernewcom({ onClose }: { onClose: () => void }) {
                       required
                     />
                   </Grid>
-                  <Grid item xs={12} sm={12}>
+                  <Grid item xs={12}>
                     <FormField
                       select
                       label="Country"
@@ -84,20 +133,32 @@ function Presceenernewcom({ onClose }: { onClose: () => void }) {
                       value={values.country}
                       onChange={handleChange}
                     >
-                      <MenuItem value="Option1">Option 1</MenuItem>
-                      <MenuItem value="Option2">Option 2</MenuItem>
-                      <MenuItem value="Option3">Option 3</MenuItem>
+                      {countries.map((country) => (
+                        <MenuItem key={country.tID} value={country.countryCode}>
+                          {country.countryName}
+                        </MenuItem>
+                      ))}
                     </FormField>
                   </Grid>
-                  <Grid item xs={12} sm={12}>
-                    <FormField
-                      type="text"
-                      label="Note"
-                      name="note"
-                      value={values.note}
-                      onChange={handleChange}
-                    />
+                  <Grid item xs={12}>
+                    {values.note ? (
+                      <div
+                        dangerouslySetInnerHTML={{ __html: values.note }}
+                        style={{
+                          textAlign: "center",
+                        }}
+                      />
+                    ) : (
+                      <FormField
+                        type="text"
+                        label="Note"
+                        name="note"
+                        value={values.note}
+                        onChange={handleChange}
+                      />
+                    )}
                   </Grid>
+
                   <Grid item xs={12}>
                     <MDBox display="flex" justifyContent="center" sx={{ marginTop: 2 }}>
                       <MDButton variant="gradient" color="light" onClick={onClose}>
@@ -108,7 +169,7 @@ function Presceenernewcom({ onClose }: { onClose: () => void }) {
                         type="submit"
                         variant="gradient"
                         color="dark"
-                        sx={{ marginLeft: 2 }} // Add margin for spacing
+                        sx={{ marginLeft: 2 }}
                       >
                         Submit
                       </MDButton>
@@ -122,6 +183,6 @@ function Presceenernewcom({ onClose }: { onClose: () => void }) {
       </Card>
     </MDBox>
   );
-}
+};
 
-export default Presceenernewcom;
+export default PresceenerNewCom;
